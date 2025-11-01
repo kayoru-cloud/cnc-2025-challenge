@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNC - Computing and Networking Council</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a2a, #1a0033, #2d0047);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Animated background elements */
+        .bg-element {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            z-index: -1;
+            filter: blur(40px);
+        }
+
+        .bg-element:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            background: #8a2be2;
+            top: 10%;
+            left: 5%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .bg-element:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            background: #4b0082;
+            bottom: 15%;
+            right: 10%;
+            animation: float 12s infinite ease-in-out reverse;
+        }
+
+        .bg-element:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            background: #9370db;
+            top: 50%;
+            left: 80%;
+            animation: float 18s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Main container */
+        .container {
+            text-align: center;
+            max-width: 800px;
+            padding: 2rem;
+            z-index: 1;
+            width: 90%;
+        }
+
+        /* CNC Logo with neon effect */
+        .cnc-logo {
+            font-size: 6rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 
+                0 0 5px #fff,
+                0 0 10px #fff,
+                0 0 15px #fff,
+                0 0 20px #8a2be2,
+                0 0 35px #8a2be2,
+                0 0 40px #8a2be2,
+                0 0 50px #8a2be2,
+                0 0 75px #8a2be2;
+            animation: neon-flicker 3s infinite alternate;
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .cnc-logo:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes neon-flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                text-shadow: 
+                    0 0 5px #fff,
+                    0 0 10px #fff,
+                    0 0 15px #fff,
+                    0 0 20px #8a2be2,
+                    0 0 35px #8a2be2,
+                    0 0 40px #8a2be2,
+                    0 0 50px #8a2be2,
+                    0 0 75px #8a2be2;
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+            }
+        }
+
+        /* Subtitle */
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #b19cd9;
+            text-shadow: 0 0 10px rgba(177, 156, 217, 0.7);
+            animation: pulse 4s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* Description */
+        .description {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 3rem;
+            color: #d8bfd8;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Hidden challenge area */
+        .challenge-area {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: rgba(26, 0, 51, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.7);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            transition: all 0.5s ease;
+        }
+
+        .challenge-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #9370db;
+            text-shadow: 0 0 5px rgba(147, 112, 219, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .challenge-hint {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            color: #b19cd9;
+            line-height: 1.5;
+        }
+
+        .challenge-input {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-align: center;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .challenge-input:focus {
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+            border: 1px solid rgba(138, 43, 226, 0.8);
+        }
+
+        .challenge-button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #8a2be2, #4b0082);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(138, 43, 226, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 0 auto;
+        }
+
+        .challenge-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(138, 43, 226, 0.6);
+        }
+
+        .challenge-message {
+            margin-top: 1rem;
+            min-height: 1.5rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .success {
+            color: #00ff00;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+        }
+
+        .error {
+            color: #ff3366;
+            text-shadow: 0 0 10px rgba(255, 51, 102, 0.7);
+        }
+
+        /* Mobile Challenge Section */
+        .mobile-challenge {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: rgba(26, 0, 51, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.7);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            display: none;
+        }
+
+        .mobile-challenge.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mobile-challenge-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #9370db;
+            text-shadow: 0 0 5px rgba(147, 112, 219, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .sequence-display {
+            font-size: 1.5rem;
+            letter-spacing: 10px;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            font-family: monospace;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sequence-hint {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            color: #b19cd9;
+            line-height: 1.5;
+        }
+
+        .sequence-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 1rem;
+        }
+
+        .sequence-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #8a2be2, #4b0082);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(138, 43, 226, 0.4);
+        }
+
+        .sequence-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(138, 43, 226, 0.6);
+        }
+
+        /* Hidden link (initially invisible) */
+        .hidden-link {
+            margin-top: 2rem;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s ease;
+        }
+
+        .hidden-link.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .secret-link {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, #8a2be2, #4b0082);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.7);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .secret-link:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .secret-link:hover:before {
+            left: 100%;
+        }
+
+        .secret-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(138, 43, 226, 0.9);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 3rem;
+            padding: 1rem;
+            color: #9370db;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Particles effect */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Challenge Toggle */
+        .challenge-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .toggle-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            background: rgba(138, 43, 226, 0.3);
+            color: #b19cd9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: rgba(138, 43, 226, 0.7);
+            color: white;
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .cnc-logo {
+                font-size: 4rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .description {
+                font-size: 1rem;
+            }
+
+            .sequence-display {
+                font-size: 1.2rem;
+                letter-spacing: 5px;
+                min-height: 60px;
+            }
+
+            .sequence-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .sequence-btn {
+                width: 80%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .cnc-logo {
+                font-size: 3rem;
+            }
+
+            .challenge-area, .mobile-challenge {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background elements -->
+    <div class="bg-element"></div>
+    <div class="bg-element"></div>
+    <div class="bg-element"></div>
+    
+    <!-- Particles container -->
+    <div id="particles-js"></div>
+    
+    <!-- Main content -->
+    <div class="container">
+        <h1 class="cnc-logo" id="cnc-logo">CNC</h1>
+        <p class="subtitle">Computing and Networking Council</p>
+        <p class="description">
+            Welcome to the future of digital innovation. The Computing and Networking Council 
+            is at the forefront of technological advancement, pushing boundaries and 
+            exploring new frontiers in computing and network technologies.
+        </p>
+        
+        <!-- Challenge Toggle -->
+        <div class="challenge-toggle">
+            <button class="toggle-btn active" id="toggle-code">Code Challenge</button>
+            <button class="toggle-btn" id="toggle-sequence">Sequence Challenge</button>
+        </div>
+        
+        <!-- Code challenge area -->
+        <div class="challenge-area" id="code-challenge">
+            <h2 class="challenge-title">
+                <i class="fas fa-key"></i>
+                Code Challenge
+            </h2>
+            <p class="challenge-hint">
+                Hint: Look for clues around the page. The code might be hidden in plain sight!
+            </p>
+            <input type="text" class="challenge-input" id="challenge-input" placeholder="Enter the secret code...">
+            <button class="challenge-button" id="challenge-button">
+                <i class="fas fa-unlock"></i>
+                Submit Code
+            </button>
+            <div class="challenge-message" id="challenge-message"></div>
+        </div>
+        
+        <!-- Mobile-friendly sequence challenge -->
+        <div class="mobile-challenge" id="sequence-challenge">
+            <h2 class="mobile-challenge-title">
+                <i class="fas fa-mobile-alt"></i>
+                Sequence Challenge
+            </h2>
+            <p class="sequence-hint">
+                Memorize the sequence of colors below, then tap them in the correct order when prompted.
+            </p>
+            <div class="sequence-display" id="sequence-display">
+                <!-- Sequence will be generated here -->
+            </div>
+            <div class="sequence-controls">
+                <button class="sequence-btn" id="start-sequence">
+                    <i class="fas fa-play"></i>
+                    Start Challenge
+                </button>
+                <button class="sequence-btn" id="check-sequence" disabled>
+                    <i class="fas fa-check"></i>
+                    Check Sequence
+                </button>
+            </div>
+            <div class="challenge-message" id="sequence-message"></div>
+        </div>
+        
+        <!-- Hidden link (initially invisible) -->
+        <div class="hidden-link" id="hidden-link">
+            <a href="#" class="secret-link" id="secret-link">
+                <i class="fas fa-external-link-alt"></i>
+                Access Restricted Content
+            </a>
+        </div>
+    </div>
+    
+    <footer>
+        &copy; 2023 Computing and Networking Council. All rights reserved.
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize particles.js
+            const canvas = document.createElement('canvas');
+            canvas.id = 'particles-canvas';
+            canvas.style.position = 'absolute';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.zIndex = '0';
+            document.getElementById('particles-js').appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const particles = [];
+            const particleCount = 50;
+            
+            // Create particles
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 2 + 1,
+                    speedX: Math.random() * 0.5 - 0.25,
+                    speedY: Math.random() * 0.5 - 0.25,
+                    color: `rgba(${Math.floor(Math.random() * 100 + 155)}, ${Math.floor(Math.random() * 100)}, ${Math.floor(Math.random() * 155 + 100)}, ${Math.random() * 0.5 + 0.2})`
+                });
+            }
+            
+            // Animation loop
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach(particle => {
+                    particle.x += particle.speedX;
+                    particle.y += particle.speedY;
+                    
+                    // Wrap around edges
+                    if (particle.x < 0) particle.x = canvas.width;
+                    if (particle.x > canvas.width) particle.x = 0;
+                    if (particle.y < 0) particle.y = canvas.height;
+                    if (particle.y > canvas.height) particle.y = 0;
+                    
+                    // Draw particle
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = particle.color;
+                    ctx.fill();
+                    
+                    // Draw connections
+                    particles.forEach(otherParticle => {
+                        const dx = particle.x - otherParticle.x;
+                        const dy = particle.y - otherParticle.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 100) {
+                            ctx.beginPath();
+                            ctx.strokeStyle = `rgba(147, 112, 219, ${0.2 * (1 - distance/100)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.moveTo(particle.x, particle.y);
+                            ctx.lineTo(otherParticle.x, otherParticle.y);
+                            ctx.stroke();
+                        }
+                    });
+                });
+                
+                requestAnimationFrame(animateParticles);
+            }
+            
+            animateParticles();
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+            
+            // CNC logo interaction
+            const cncLogo = document.getElementById('cnc-logo');
+            let clickCount = 0;
+            
+            cncLogo.addEventListener('click', function() {
+                clickCount++;
+                
+                // Change color on click
+                const colors = ['#8a2be2', '#4b0082', '#9370db', '#00bfff', '#ff00ff'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                cncLogo.style.textShadow = 
+                    `0 0 5px #fff,
+                     0 0 10px #fff,
+                     0 0 15px #fff,
+                     0 0 20px ${randomColor},
+                     0 0 35px ${randomColor},
+                     0 0 40px ${randomColor},
+                     0 0 50px ${randomColor},
+                     0 0 75px ${randomColor}`;
+                
+                // Easter egg after 5 clicks
+                if (clickCount === 5) {
+                    document.getElementById('challenge-message').textContent = "Easter egg discovered! The code might be related to colors...";
+                    document.getElementById('challenge-message').className = 'challenge-message success';
+                    setTimeout(() => {
+                        document.getElementById('challenge-message').textContent = '';
+                    }, 4000);
+                }
+                
+                // Reveal code hint after 10 clicks
+                if (clickCount === 10) {
+                    document.getElementById('challenge-message').textContent = "The secret code is: TECH2023";
+                    document.getElementById('challenge-message').className = 'challenge-message success';
+                    document.getElementById('challenge-input').value = "TECH2023";
+                    clickCount = 0;
+                }
+            });
+            
+            // Challenge toggle functionality
+            const toggleCode = document.getElementById('toggle-code');
+            const toggleSequence = document.getElementById('toggle-sequence');
+            const codeChallenge = document.getElementById('code-challenge');
+            const sequenceChallenge = document.getElementById('sequence-challenge');
+            
+            toggleCode.addEventListener('click', function() {
+                toggleCode.classList.add('active');
+                toggleSequence.classList.remove('active');
+                codeChallenge.style.display = 'block';
+                sequenceChallenge.classList.remove('active');
+            });
+            
+            toggleSequence.addEventListener('click', function() {
+                toggleSequence.classList.add('active');
+                toggleCode.classList.remove('active');
+                codeChallenge.style.display = 'none';
+                sequenceChallenge.classList.add('active');
+            });
+            
+            // Code Challenge functionality
+            const challengeInput = document.getElementById('challenge-input');
+            const challengeButton = document.getElementById('challenge-button');
+            const challengeMessage = document.getElementById('challenge-message');
+            const hiddenLink = document.getElementById('hidden-link');
+            const secretLink = document.getElementById('secret-link');
+            
+            // Secret code
+            const secretCode = "TECH2023";
+            
+            challengeButton.addEventListener('click', function() {
+                const userInput = challengeInput.value.trim().toUpperCase();
+                
+                if (userInput === secretCode) {
+                    challengeMessage.textContent = "Success! Access granted.";
+                    challengeMessage.className = 'challenge-message success';
+                    hiddenLink.classList.add('visible');
+                    
+                    // Set the actual link (replace with your desired URL)
+                    secretLink.href = "https://example.com/cnc-exclusive-content";
+                } else {
+                    challengeMessage.textContent = "Incorrect code. Try again.";
+                    challengeMessage.className = 'challenge-message error';
+                }
+            });
+            
+            // Allow pressing Enter to submit
+            challengeInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    challengeButton.click();
+                }
+            });
+            
+            // Sequence Challenge functionality
+            const sequenceDisplay = document.getElementById('sequence-display');
+            const startSequenceBtn = document.getElementById('start-sequence');
+            const checkSequenceBtn = document.getElementById('check-sequence');
+            const sequenceMessage = document.getElementById('sequence-message');
+            
+            let targetSequence = [];
+            let userSequence = [];
+            let sequenceActive = false;
+            
+            // Color options for the sequence
+            const colors = [
+                { name: 'Red', code: '#FF3366' },
+                { name: 'Blue', code: '#3366FF' },
+                { name: 'Green', code: '#33FF66' },
+                { name: 'Purple', code: '#AA66FF' },
+                { name: 'Yellow', code: '#FFDD33' }
+            ];
+            
+            // Generate a random sequence
+            function generateSequence(length = 5) {
+                const sequence = [];
+                for (let i = 0; i < length; i++) {
+                    const randomIndex = Math.floor(Math.random() * colors.length);
+                    sequence.push(colors[randomIndex]);
+                }
+                return sequence;
+            }
+            
+            // Display the sequence to memorize
+            function displaySequence(sequence) {
+                sequenceDisplay.innerHTML = '';
+                sequence.forEach(color => {
+                    const colorBox = document.createElement('span');
+                    colorBox.style.display = 'inline-block';
+                    colorBox.style.width = '30px';
+                    colorBox.style.height = '30px';
+                    colorBox.style.backgroundColor = color.code;
+                    colorBox.style.margin = '0 5px';
+                    colorBox.style.borderRadius = '5px';
+                    colorBox.style.boxShadow = `0 0 10px ${color.code}`;
+                    sequenceDisplay.appendChild(colorBox);
+                });
+            }
+            
+            // Start the sequence challenge
+            startSequenceBtn.addEventListener('click', function() {
+                targetSequence = generateSequence();
+                userSequence = [];
+                sequenceActive = true;
+                
+                // Show the sequence to memorize
+                displaySequence(targetSequence);
+                sequenceMessage.textContent = "Memorize this sequence!";
+                sequenceMessage.className = 'challenge-message';
+                
+                // Hide sequence after 3 seconds
+                setTimeout(() => {
+                    sequenceDisplay.innerHTML = '???';
+                    sequenceMessage.textContent = "Now tap the colors in the correct order!";
+                    startSequenceBtn.disabled = true;
+                    checkSequenceBtn.disabled = false;
+                    
+                    // Create color selection buttons
+                    createColorButtons();
+                }, 3000);
+            });
+            
+            // Create color selection buttons for the user
+            function createColorButtons() {
+                sequenceDisplay.innerHTML = '';
+                const buttonContainer = document.createElement('div');
+                buttonContainer.style.display = 'flex';
+                buttonContainer.style.justifyContent = 'center';
+                buttonContainer.style.gap = '10px';
+                buttonContainer.style.flexWrap = 'wrap';
+                
+                colors.forEach(color => {
+                    const colorBtn = document.createElement('button');
+                    colorBtn.style.width = '50px';
+                    colorBtn.style.height = '50px';
+                    colorBtn.style.backgroundColor = color.code;
+                    colorBtn.style.border = 'none';
+                    colorBtn.style.borderRadius = '10px';
+                    colorBtn.style.cursor = 'pointer';
+                    colorBtn.style.boxShadow = `0 0 10px ${color.code}`;
+                    colorBtn.addEventListener('click', function() {
+                        if (sequenceActive) {
+                            userSequence.push(color);
+                            // Visual feedback
+                            colorBtn.style.transform = 'scale(0.9)';
+                            setTimeout(() => {
+                                colorBtn.style.transform = 'scale(1)';
+                            }, 200);
+                            
+                            // Show user progress
+                            sequenceMessage.textContent = `Selected ${userSequence.length} of ${targetSequence.length} colors`;
+                        }
+                    });
+                    buttonContainer.appendChild(colorBtn);
+                });
+                
+                sequenceDisplay.appendChild(buttonContainer);
+            }
+            
+            // Check if user sequence matches target sequence
+            checkSequenceBtn.addEventListener('click', function() {
+                if (userSequence.length !== targetSequence.length) {
+                    sequenceMessage.textContent = `Please select exactly ${targetSequence.length} colors`;
+                    sequenceMessage.className = 'challenge-message error';
+                    return;
+                }
+                
+                let isCorrect = true;
+                for (let i = 0; i < targetSequence.length; i++) {
+                    if (userSequence[i].name !== targetSequence[i].name) {
+                        isCorrect = false;
+                        break;
+                    }
+                }
+                
+                if (isCorrect) {
+                    sequenceMessage.textContent = "Perfect! Sequence correct. Access granted!";
+                    sequenceMessage.className = 'challenge-message success';
+                    hiddenLink.classList.add('visible');
+                    
+                    // Set the actual link (replace with your desired URL)
+                    secretLink.href = "https://example.com/cnc-exclusive-content";
+                    sequenceActive = false;
+                } else {
+                    sequenceMessage.textContent = "Incorrect sequence. Try again!";
+                    sequenceMessage.className = 'challenge-message error';
+                    userSequence = [];
+                    setTimeout(() => {
+                        sequenceMessage.textContent = "Tap the colors in the correct order!";
+                    }, 2000);
+                }
+            });
+            
+            // Auto-show mobile challenge on mobile devices
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                toggleSequence.click();
+            }
+        });
+    </script>
+</body>
+</html>
